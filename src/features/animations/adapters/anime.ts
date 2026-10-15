@@ -1,7 +1,7 @@
 import { animate, createDrawable, type JSAnimation, stagger } from "animejs"
 import type { RepeatMode } from "../model/common-fields"
 import type { ConfigFor } from "../model/families"
-import { type PlaybackControls, queryTarget, queryTargets } from "../playback"
+import { type PlaybackControls, queryTargets } from "../playback"
 
 /**
  * Anime.js (v4) adapter. Durations are already in milliseconds, which is what
@@ -69,54 +69,4 @@ export function startSvgDraw(root: Element, c: ConfigFor<"svg-draw">): PlaybackC
       delay: stagger(c.stagger, { start: c.delay }),
     }),
   )
-}
-
-// --- bouncing-dots ----------------------------------------------------------
-
-export function bouncingDotsParams(c: ConfigFor<"bouncing-dots">) {
-  return {
-    translateY: [0, -c.height],
-    duration: c.duration,
-    ease: c.ease,
-    loop: true,
-    alternate: true,
-  }
-}
-
-export function startBouncingDots(root: Element, c: ConfigFor<"bouncing-dots">): PlaybackControls {
-  const dots = queryTargets(root, "[data-anim-item]")
-  return wrap(animate(dots, { ...bouncingDotsParams(c), delay: stagger(c.stagger) }))
-}
-
-// --- progress-bar -----------------------------------------------------------
-
-export function progressBarParams(c: ConfigFor<"progress-bar">) {
-  return {
-    scaleX: [0, 1],
-    duration: c.duration,
-    delay: c.delay,
-    ease: c.ease,
-    ...animeRepeat(c.repeat),
-  }
-}
-
-export function startProgressBar(root: Element, c: ConfigFor<"progress-bar">): PlaybackControls {
-  const bar = queryTarget(root, "[data-anim-target]")
-  return wrap(animate(bar, progressBarParams(c)))
-}
-
-// --- orbit-spinner ----------------------------------------------------------
-
-export function orbitSpinnerParams(c: ConfigFor<"orbit-spinner">) {
-  return {
-    rotate: c.spin === "clockwise" ? [0, 360] : [0, -360],
-    duration: c.duration,
-    ease: c.ease,
-    loop: true,
-  }
-}
-
-export function startOrbitSpinner(root: Element, c: ConfigFor<"orbit-spinner">): PlaybackControls {
-  const orbit = queryTarget(root, "[data-anim-target]")
-  return wrap(animate(orbit, orbitSpinnerParams(c)))
 }

@@ -1,8 +1,14 @@
 import {
+  bouncingDotsKeyframes,
+  bouncingDotsTransition,
   fadeSlideKeyframes,
   fadeSlideTransition,
   hoverLiftProps,
+  orbitSpinnerKeyframes,
+  orbitSpinnerTransition,
   pageTransitionKeyframes,
+  progressBarKeyframes,
+  progressBarTransition,
   springPopKeyframes,
   springPopTransition,
   staggerCardsKeyframes,
@@ -186,6 +192,101 @@ ${props({ initial: from(enter), animate: to(enter), exit: to(exit), transition }
 </${component}>`,
     notes: [
       "Change pageKey to trigger the transition; the exit finishes before the next page enters.",
+      REDUCED_MOTION_NOTE,
+    ],
+  }
+}
+
+export function motionBouncingDots(c: ConfigFor<"bouncing-dots">, component: string): Snippet {
+  return {
+    code: `"use client"
+
+import { motion } from "motion/react"
+
+const transition = ${toCode(bouncingDotsTransition(c))} as const
+
+/** A looping, staggered bounce for loading indicators. */
+export function ${component}({ count = ${c.count}, label = "Loading" }: { count?: number; label?: string }) {
+  return (
+    <span role="status" className="inline-flex items-end gap-2">
+      {Array.from({ length: count }, (_, i) => (
+        <motion.span
+          key={i}
+          aria-hidden
+          className="size-3 rounded-full bg-current"
+${props({ animate: bouncingDotsKeyframes(c) }, 10)}
+          transition={{ ...transition, delay: i * ${toCode(seconds(c.stagger))} }}
+        />
+      ))}
+      <span className="sr-only">{label}</span>
+    </span>
+  )
+}
+`,
+    usage: `<${component} count={${c.count}} label="Loading results" />`,
+    notes: [
+      'role="status" announces the label when the dots appear; make it specific.',
+      REDUCED_MOTION_NOTE,
+    ],
+  }
+}
+
+export function motionProgressBar(c: ConfigFor<"progress-bar">, component: string): Snippet {
+  const frames = progressBarKeyframes()
+  return {
+    code: `"use client"
+
+import { motion } from "motion/react"
+
+/** Fills a progress bar using a transform, avoiding layout work. */
+export function ${component}({ className }: { className?: string }) {
+  return (
+    <motion.div
+      className={className}
+      style={{ transformOrigin: "left" }}
+${props({ initial: from(frames), animate: to(frames), transition: progressBarTransition(c) }, 6)}
+    />
+  )
+}
+`,
+    usage: `<div className="h-2 overflow-hidden rounded-full bg-gray-200">
+  <${component} className="h-full rounded-full bg-blue-500" />
+</div>`,
+    notes: [
+      "transformOrigin: left makes the bar grow from the start.",
+      'For real progress, use role="progressbar" with aria-valuenow on the track.',
+      REDUCED_MOTION_NOTE,
+    ],
+  }
+}
+
+export function motionOrbitSpinner(c: ConfigFor<"orbit-spinner">, component: string): Snippet {
+  return {
+    code: `"use client"
+
+import { motion } from "motion/react"
+import type { ReactNode } from "react"
+
+/** Rotates its children (the satellites) around the center. */
+export function ${component}({ children }: { children: ReactNode }) {
+  return (
+    <motion.div
+      className="relative size-20"
+${props({ animate: orbitSpinnerKeyframes(c), transition: orbitSpinnerTransition(c) }, 6)}
+    >
+      {children}
+    </motion.div>
+  )
+}
+`,
+    usage: `<div role="status" aria-label="Loading">
+  <${component}>
+    <span className="absolute top-0 left-1/2 size-3 -translate-1/2 rounded-full bg-current" />
+  </${component}>
+</div>`,
+    notes: [
+      "Position the satellites inside; the whole group rotates.",
+      'Give the wrapper role="status" and a label so the loading state is announced.',
       REDUCED_MOTION_NOTE,
     ],
   }

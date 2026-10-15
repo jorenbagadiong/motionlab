@@ -13,7 +13,6 @@ export function SiteHeader() {
         <nav aria-label="Main" className="hidden md:block">
           <NavLinks />
         </nav>
-        {/* Account controls (sign in, library) are added with Supabase Auth in Phase 4. */}
         <div className="ml-auto flex items-center gap-2">
           <AccentPicker />
           <ThemeToggle />

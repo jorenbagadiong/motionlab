@@ -1,6 +1,6 @@
 "use client"
 
-import { startProgressBar } from "../../adapters/anime"
+import { startProgressBar } from "../../adapters/motion"
 import { useAnimationRun } from "../../hooks/use-animation-run"
 import type { ConfigFor } from "../../model"
 import type { RendererProps } from "../types"

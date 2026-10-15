@@ -1,15 +1,12 @@
 import { type AnimationConfig, ENGINES } from "@/features/animations/model"
+import { animeSvgDraw, animeTextReveal } from "./anime"
 import {
-  animeBouncingDots,
-  animeOrbitSpinner,
-  animeProgressBar,
-  animeSvgDraw,
-  animeTextReveal,
-} from "./anime"
-import {
+  motionBouncingDots,
   motionFadeSlide,
   motionHoverLift,
+  motionOrbitSpinner,
   motionPageTransition,
+  motionProgressBar,
   motionSpringPop,
   motionStaggerCards,
 } from "./motion"
@@ -35,11 +32,11 @@ function snippetFor(config: AnimationConfig, name: string): Snippet {
     case "svg-draw":
       return animeSvgDraw(config, fn)
     case "bouncing-dots":
-      return animeBouncingDots(config, fn)
+      return motionBouncingDots(config, component)
     case "progress-bar":
-      return animeProgressBar(config, fn)
+      return motionProgressBar(config, component)
     case "orbit-spinner":
-      return animeOrbitSpinner(config, fn)
+      return motionOrbitSpinner(config, component)
   }
 }
 

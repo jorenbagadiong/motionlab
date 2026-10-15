@@ -1,4 +1,4 @@
-import { ArrowLeft, SlidersHorizontal } from "lucide-react"
+import { ArrowLeft, Blocks, SlidersHorizontal } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -43,10 +43,18 @@ export default async function PresetPage({ params }: PageProps<"/presets/[slug]"
         title={preset.name}
         description={preset.description}
         actions={
-          <ButtonLink href={`/playground/${preset.slug}`} variant="primary">
-            <SlidersHorizontal aria-hidden />
-            Customize in playground
-          </ButtonLink>
+          <>
+            <ButtonLink href={`/playground/${preset.slug}`} variant="primary">
+              <SlidersHorizontal aria-hidden />
+              Customize in playground
+            </ButtonLink>
+            {preset.component && (
+              <ButtonLink href={`/components/${preset.component}`}>
+                <Blocks aria-hidden />
+                Use as a component
+              </ButtonLink>
+            )}
+          </>
         }
       />
 

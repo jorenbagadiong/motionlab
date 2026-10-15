@@ -36,6 +36,7 @@ export const CATEGORIES = [
   "Forms",
   "Feedback",
   "Display",
+  "Typography",
   "Navigation",
   "Overlay",
 ] as const

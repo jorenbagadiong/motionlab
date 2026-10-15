@@ -25,10 +25,11 @@ describe("filterPresets", () => {
   })
 
   it("filters by category and engine together", () => {
-    expect(slugs({ category: "loader", engine: "anime" }).sort()).toEqual(
+    // Loaders are block animations, so they use Motion; Anime.js covers SVG and text.
+    expect(slugs({ category: "loader", engine: "motion" }).sort()).toEqual(
       ["bouncing-dots", "orbit-spinner", "progress-fill"].sort(),
     )
-    expect(slugs({ category: "loader", engine: "motion" })).toEqual([])
+    expect(slugs({ category: "loader", engine: "anime" })).toEqual([])
   })
 
   it("matches the engine label in search", () => {

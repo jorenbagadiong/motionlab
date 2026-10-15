@@ -200,3 +200,10 @@
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* Dotted grid for the dev-tool style surfaces (carousel slides, demo stages). */
+@utility bg-dots {
+  background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+  background-size: 12px 12px;
+  background-position: 6px 6px;
+}
