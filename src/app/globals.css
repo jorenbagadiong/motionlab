@@ -1,0 +1,202 @@
+@import "tailwindcss";
+
+/*
+ * MotionLab design tokens.
+ *
+ * Dark is the default palette. Light applies when the user chooses it
+ * (data-theme="light" on <html>) or, with no explicit choice, when the system
+ * prefers light. data-theme="dark" forces dark. Both light blocks below must
+ * stay identical; tests/unit/theme/tokens.test.ts enforces this.
+ *
+ * Contrast: every text token clears WCAG AA (4.5:1) on every surface in both
+ * themes, including tinted badge backgrounds.
+ */
+:root {
+  color-scheme: dark;
+  --canvas: oklch(0.165 0.006 286);
+  --surface: oklch(0.198 0.007 286);
+  --surface-raised: oklch(0.232 0.008 286);
+  --surface-overlay: oklch(0.27 0.009 286);
+  --line: oklch(0.31 0.01 286);
+  --line-strong: oklch(0.4 0.012 286);
+  --fg: oklch(0.97 0.003 286);
+  --fg-muted: oklch(0.79 0.01 286);
+  --fg-subtle: oklch(0.68 0.012 286);
+  --accent: var(--accent-on-dark);
+  --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+  --engine-motion: oklch(0.78 0.13 235);
+  --engine-anime: oklch(0.82 0.13 75);
+  --danger: oklch(0.7 0.18 25);
+  --success: oklch(0.78 0.14 160);
+  --warning: oklch(0.83 0.14 85);
+  --grid-line: oklch(1 0 0 / 0.035);
+  --selection: color-mix(in oklch, var(--accent) 35%, transparent);
+  --glow: color-mix(in oklch, var(--accent-strong) 55%, transparent);
+  --panel-shadow: 0 1px 0 0 oklch(1 0 0 / 0.04) inset, 0 16px 40px -24px oklch(0 0 0 / 0.8);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --canvas: oklch(0.985 0.002 286);
+  --surface: oklch(1 0 0);
+  --surface-raised: oklch(0.97 0.003 286);
+  --surface-overlay: oklch(0.94 0.004 286);
+  --line: oklch(0.9 0.005 286);
+  --line-strong: oklch(0.82 0.008 286);
+  --fg: oklch(0.21 0.01 286);
+  --fg-muted: oklch(0.42 0.012 286);
+  --fg-subtle: oklch(0.5 0.012 286);
+  --accent: var(--accent-on-light);
+  --accent-soft: color-mix(in oklch, var(--accent) 10%, transparent);
+  --engine-motion: oklch(0.48 0.13 240);
+  --engine-anime: oklch(0.5 0.11 60);
+  --danger: oklch(0.5 0.19 25);
+  --success: oklch(0.46 0.11 160);
+  --warning: oklch(0.49 0.11 70);
+  --grid-line: oklch(0 0 0 / 0.05);
+  --selection: color-mix(in oklch, var(--accent-strong) 20%, transparent);
+  --glow: color-mix(in oklch, var(--accent-strong) 35%, transparent);
+  --panel-shadow: 0 1px 2px 0 oklch(0 0 0 / 0.04), 0 12px 32px -20px oklch(0 0 0 / 0.25);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --canvas: oklch(0.985 0.002 286);
+    --surface: oklch(1 0 0);
+    --surface-raised: oklch(0.97 0.003 286);
+    --surface-overlay: oklch(0.94 0.004 286);
+    --line: oklch(0.9 0.005 286);
+    --line-strong: oklch(0.82 0.008 286);
+    --fg: oklch(0.21 0.01 286);
+    --fg-muted: oklch(0.42 0.012 286);
+    --fg-subtle: oklch(0.5 0.012 286);
+    --accent: var(--accent-on-light);
+    --accent-soft: color-mix(in oklch, var(--accent) 10%, transparent);
+    --engine-motion: oklch(0.48 0.13 240);
+    --engine-anime: oklch(0.5 0.11 60);
+    --danger: oklch(0.5 0.19 25);
+    --success: oklch(0.46 0.11 160);
+    --warning: oklch(0.49 0.11 70);
+    --grid-line: oklch(0 0 0 / 0.05);
+    --selection: color-mix(in oklch, var(--accent-strong) 20%, transparent);
+    --glow: color-mix(in oklch, var(--accent-strong) 35%, transparent);
+    --panel-shadow: 0 1px 2px 0 oklch(0 0 0 / 0.04), 0 12px 32px -20px oklch(0 0 0 / 0.25);
+  }
+}
+
+/*
+ * Accent color themes, chosen independently of light/dark and applied as
+ * data-accent on <html> (violet when absent). Each defines the accent for text
+ * on dark and on light surfaces, plus a solid fill behind white text that works
+ * in both modes. The light/dark blocks above pick the right one, and soft
+ * tints, selection and glow are mixed from these. Keep ACCENTS in
+ * src/features/theme/theme.ts in sync; tests/unit/theme/tokens.test.ts checks
+ * the list and every contrast pairing.
+ */
+:root,
+:root[data-accent="violet"] {
+  --accent-on-dark: oklch(0.74 0.17 292);
+  --accent-on-light: oklch(0.5 0.22 292);
+  --accent-strong: oklch(0.55 0.23 292);
+  --accent-hover: oklch(0.5 0.22 292);
+}
+
+:root[data-accent="blue"] {
+  --accent-on-dark: oklch(0.74 0.14 250);
+  --accent-on-light: oklch(0.48 0.18 258);
+  --accent-strong: oklch(0.53 0.19 258);
+  --accent-hover: oklch(0.48 0.18 258);
+}
+
+:root[data-accent="emerald"] {
+  --accent-on-dark: oklch(0.78 0.15 162);
+  --accent-on-light: oklch(0.46 0.11 162);
+  --accent-strong: oklch(0.5 0.11 162);
+  --accent-hover: oklch(0.45 0.1 162);
+}
+
+:root[data-accent="rose"] {
+  --accent-on-dark: oklch(0.75 0.16 10);
+  --accent-on-light: oklch(0.5 0.2 12);
+  --accent-strong: oklch(0.55 0.21 12);
+  --accent-hover: oklch(0.5 0.2 12);
+}
+
+:root[data-accent="amber"] {
+  --accent-on-dark: oklch(0.8 0.15 70);
+  --accent-on-light: oklch(0.5 0.12 55);
+  --accent-strong: oklch(0.52 0.14 45);
+  --accent-hover: oklch(0.47 0.13 45);
+}
+
+/* Theme-independent: the solid red behind white text (destructive buttons) works in both modes. */
+@theme {
+  --color-danger-strong: oklch(0.55 0.2 25);
+  --color-danger-hover: oklch(0.5 0.19 25);
+}
+
+/* `inline` makes utilities reference the variables, so they follow the theme. */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-hover: var(--accent-hover);
+  --color-engine-motion: var(--engine-motion);
+  --color-engine-anime: var(--engine-anime);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --shadow-glow: 0 0 0 1px var(--accent-soft), 0 12px 48px -16px var(--glow);
+  --shadow-panel: var(--panel-shadow);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  html {
+    background-color: var(--canvas);
+    color: var(--fg);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+  }
+
+  ::selection {
+    background-color: var(--selection);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
