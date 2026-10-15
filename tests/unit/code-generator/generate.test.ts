@@ -67,7 +67,8 @@ describe("generateCode", () => {
     const stagger = generateCode({ ...defaultConfig("stagger-cards"), count: 6 }, "Cards")
     expect(stagger.usage.match(/"Item \d"/g)).toHaveLength(6)
     const dots = generateCode({ ...defaultConfig("bouncing-dots"), count: 5 }, "Dots")
-    expect(dots.usage.match(/className="dot"/g)).toHaveLength(5)
+    expect(dots.usage).toContain("count={5}")
+    expect(dots.code).toContain("count = 5")
   })
 
   it("names exports after the preset", () => {

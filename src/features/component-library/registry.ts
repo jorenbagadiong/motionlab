@@ -877,6 +877,691 @@ const separator = defineComponent({
   ],
 })
 
+const TRIGGER_PROPS = [
+  {
+    name: "trigger",
+    type: '"mount" | "inView"',
+    default: '"mount"',
+    description: "Play when mounted, or the first time a quarter of it scrolls into view.",
+  },
+  {
+    name: "replay",
+    type: "boolean",
+    default: "false",
+    description: 'With trigger="inView": play again each time it re-enters the viewport.',
+  },
+]
+
+const REDUCED_MOTION_NOTE =
+  "With reduced motion the final state is shown straight away; nothing animates."
+
+const textReveal = defineComponent({
+  slug: "text-reveal",
+  name: "Text Reveal",
+  category: "Typography",
+  description:
+    "Text that animates in per character, word or line, with slide, blur, rotate or terminal effects (Anime.js). The Character Rise and Letter Tumble presets as a component.",
+  importPath: `${UI}/text-reveal`,
+  exports: ["TextReveal"],
+  controls: {
+    text: {
+      kind: "text",
+      label: "Text",
+      initial: "Ship motion that feels designed.",
+      maxLength: 80,
+    },
+    split: { kind: "select", label: "Split", options: ["char", "word", "line"], initial: "word" },
+    effect: {
+      kind: "select",
+      label: "Effect",
+      options: ["slide", "blur", "rotate", "terminal"],
+      initial: "blur",
+    },
+  },
+  code: (v) =>
+    moduleCode({
+      imports: [[`${UI}/text-reveal`, ["TextReveal"]]],
+      name: "TextRevealDemo",
+      jsx: element("TextReveal", [
+        attr("text", v.text),
+        attr("split", unless(v.split, "word")),
+        attr("effect", unless(v.effect, "slide")),
+        attr("className", "text-3xl font-semibold tracking-tight"),
+      ]),
+    }),
+  props: [
+    { name: "text", type: "string", description: 'The text. Use "\\n" for line breaks.' },
+    {
+      name: "split",
+      type: '"char" | "word" | "line"',
+      default: '"word"',
+      description: "The piece that animates on its own. Characters stay grouped per word.",
+    },
+    {
+      name: "effect",
+      type: '"slide" | "blur" | "rotate" | "terminal"',
+      default: '"slide"',
+      description: "terminal types characters in fixed steps behind a blinking caret.",
+    },
+    {
+      name: "as",
+      type: "ElementType",
+      default: '"p"',
+      description: 'Element to render, e.g. "h1".',
+    },
+    { name: "duration", type: "number", default: "600", description: "Milliseconds per piece." },
+    {
+      name: "stagger",
+      type: "number",
+      description: "Milliseconds between pieces. Defaults depend on split and effect.",
+    },
+    {
+      name: "delay",
+      type: "number",
+      default: "0",
+      description: "Milliseconds before the first piece.",
+    },
+    {
+      name: "ease",
+      type: "string",
+      default: '"outExpo"',
+      description: 'Anime.js easing name, e.g. "outElastic" for a springy settle.',
+    },
+    ...TRIGGER_PROPS,
+  ],
+  examples: ["text-reveal", "text-reveal-presets"],
+  a11y: [
+    "Screen readers read the full text once; the animated pieces are aria-hidden.",
+    REDUCED_MOTION_NOTE,
+  ],
+})
+
+const numberTicker = defineComponent({
+  slug: "number-ticker",
+  name: "Number Ticker",
+  category: "Typography",
+  description:
+    "A number whose digits roll like an odometer to each new value, with fixed-width digits (Anime.js).",
+  importPath: `${UI}/number-ticker`,
+  exports: ["NumberTicker", "formatTickerValue"],
+  controls: {
+    value: { kind: "number", label: "Value", initial: 1284, min: 0, max: 99999, step: 1 },
+    decimals: { kind: "number", label: "Decimals", initial: 0, min: 0, max: 2, step: 1 },
+    prefix: { kind: "text", label: "Prefix", initial: "", maxLength: 4 },
+    suffix: { kind: "text", label: "Suffix", initial: "", maxLength: 6 },
+  },
+  code: (v) =>
+    moduleCode({
+      imports: [[`${UI}/number-ticker`, ["NumberTicker"]]],
+      name: "NumberTickerDemo",
+      jsx: element("NumberTicker", [
+        attr("value", v.value),
+        attr("decimals", unless(v.decimals, 0)),
+        attr("prefix", unless(v.prefix, "")),
+        attr("suffix", unless(v.suffix, "")),
+        attr("className", "font-mono text-5xl"),
+      ]),
+    }),
+  props: [
+    {
+      name: "value",
+      type: "number",
+      description: "The number. Changing it rolls from the old value.",
+    },
+    { name: "decimals", type: "number", default: "0", description: "Fixed number of decimals." },
+    {
+      name: "minDigits",
+      type: "number",
+      default: "1",
+      description: "Pads with leading zeros: 2 shows 3 as 03.",
+    },
+    { name: "prefix", type: "string", description: 'Text before the number, e.g. "$".' },
+    { name: "suffix", type: "string", description: 'Text after the number, e.g. " kB".' },
+    {
+      name: "locale",
+      type: "string",
+      default: '"en-US"',
+      description: "Grouping and decimal separators. Fixed so server and client render the same.",
+    },
+    { name: "duration", type: "number", default: "900", description: "Milliseconds per roll." },
+    {
+      name: "trigger",
+      type: '"mount" | "inView"',
+      default: '"mount"',
+      description: "When the first roll from zero plays. Later changes always roll.",
+    },
+  ],
+  examples: ["number-ticker"],
+  a11y: [
+    "Screen readers get the formatted value with its prefix and suffix; the digit columns are aria-hidden.",
+    "The value isn't announced when it changes. Wrap it in a live region if the change matters.",
+    REDUCED_MOTION_NOTE,
+  ],
+})
+
+const textScramble = defineComponent({
+  slug: "text-scramble",
+  name: "Text Scramble",
+  category: "Typography",
+  description:
+    "Text that decodes from random glyphs or types itself out, and can cycle through a list of words (Anime.js).",
+  importPath: `${UI}/text-scramble`,
+  exports: ["TextScramble"],
+  controls: {
+    text: { kind: "text", label: "Text", initial: "ACCESS GRANTED", maxLength: 40 },
+    mode: { kind: "select", label: "Mode", options: ["scramble", "type"], initial: "scramble" },
+    duration: { kind: "number", label: "Duration", initial: 900, min: 200, max: 3000, step: 100 },
+  },
+  code: (v) =>
+    moduleCode({
+      imports: [[`${UI}/text-scramble`, ["TextScramble"]]],
+      name: "TextScrambleDemo",
+      jsx: element("TextScramble", [
+        attr("text", v.text),
+        attr("mode", unless(v.mode, "scramble")),
+        attr("duration", unless(v.duration, 900)),
+        attr("className", "text-2xl"),
+      ]),
+    }),
+  props: [
+    { name: "text", type: "string", description: "The text. Ignored when words is given." },
+    { name: "words", type: "string[]", description: "Cycles through these, one after another." },
+    {
+      name: "mode",
+      type: '"scramble" | "type"',
+      default: '"scramble"',
+      description: "scramble decodes from random glyphs; type types behind a blinking caret.",
+    },
+    { name: "duration", type: "number", default: "900", description: "Milliseconds per word." },
+    {
+      name: "pause",
+      type: "number",
+      default: "1600",
+      description: "Milliseconds a finished word stays before the next one.",
+    },
+    {
+      name: "loop",
+      type: "boolean",
+      default: "true",
+      description: "Repeat the word list forever.",
+    },
+    { name: "glyphs", type: "string", description: "Characters used while scrambling." },
+    ...TRIGGER_PROPS,
+  ],
+  examples: ["text-scramble"],
+  a11y: [
+    "Screen readers get the real words once, never the random in-between frames.",
+    "A cycling word list keeps moving; don't use it for content people need to read in full.",
+    REDUCED_MOTION_NOTE,
+  ],
+})
+
+const textHighlight = defineComponent({
+  slug: "text-highlight",
+  name: "Text Highlight",
+  category: "Typography",
+  description:
+    "Draws an SVG underline, squiggle, bracket box, circle, strike or marker around a word (Anime.js).",
+  importPath: `${UI}/text-highlight`,
+  exports: ["TextHighlight"],
+  controls: {
+    variant: {
+      kind: "select",
+      label: "Variant",
+      options: ["underline", "squiggle", "box", "circle", "strike", "marker"],
+      initial: "squiggle",
+    },
+    word: { kind: "text", label: "Word", initial: "smooth", maxLength: 30 },
+  },
+  code: (v) =>
+    moduleCode({
+      imports: [[`${UI}/text-highlight`, ["TextHighlight"]]],
+      name: "TextHighlightDemo",
+      jsx: element(
+        "p",
+        [attr("className", "text-3xl font-semibold")],
+        [
+          "Ship",
+          `{" "}`,
+          element(
+            "TextHighlight",
+            [attr("variant", unless(v.variant, "underline"))],
+            [v.word ? text(v.word) : ""],
+          ),
+          `{" "}`,
+          "motion.",
+        ],
+      ),
+    }),
+  props: [
+    { name: "children", type: "ReactNode", description: "The text to mark." },
+    {
+      name: "variant",
+      type: '"underline" | "squiggle" | "box" | "circle" | "strike" | "marker"',
+      default: '"underline"',
+      description: "The mark. marker sweeps a soft accent block in behind the text.",
+    },
+    { name: "duration", type: "number", default: "800", description: "Milliseconds to draw." },
+    { name: "delay", type: "number", default: "200", description: "Milliseconds before drawing." },
+    {
+      name: "trigger",
+      type: '"mount" | "inView"',
+      default: '"inView"',
+      description: "Draw when mounted, or when it scrolls into view.",
+    },
+    {
+      name: "replay",
+      type: "boolean",
+      default: "false",
+      description: 'With trigger="inView": draw again each time it re-enters the viewport.',
+    },
+  ],
+  examples: ["text-highlight"],
+  a11y: [
+    "The mark is decorative (aria-hidden). Don't rely on it alone for meaning; use <strong>, <em> or <del> when emphasis or deletion matters.",
+    REDUCED_MOTION_NOTE,
+  ],
+})
+
+const CAROUSEL_SLIDES = ["fade_up", "spring_pop", "svg_draw", "text_reveal", "orbit_spinner"]
+
+const carousel = defineComponent({
+  slug: "carousel",
+  name: "Carousel",
+  category: "Display",
+  description:
+    "Draggable slides with bracket controls, status, pagination, thumbnails and autoplay progress. Motion moves the blocks; Anime.js draws the arrows and rolls the counter.",
+  importPath: `${UI}/carousel`,
+  exports: [
+    "Carousel",
+    "CarouselContent",
+    "CarouselItem",
+    "CarouselPrevious",
+    "CarouselNext",
+    "CarouselStatus",
+    "CarouselProgress",
+    "CarouselPagination",
+    "CarouselThumbs",
+    "CarouselPlayToggle",
+    "BracketButton",
+    "useCarousel",
+  ],
+  controls: {
+    orientation: {
+      kind: "select",
+      label: "Orientation",
+      options: ["horizontal", "vertical"],
+      initial: "horizontal",
+    },
+    align: { kind: "select", label: "Align", options: ["start", "center"], initial: "start" },
+    slidesPerView: { kind: "number", label: "Per view", initial: 1, min: 1, max: 3, step: 0.5 },
+    effect: {
+      kind: "select",
+      label: "Effect",
+      options: ["none", "fade", "scale"],
+      initial: "none",
+    },
+    loop: { kind: "boolean", label: "Loop", initial: false },
+    autoplay: { kind: "boolean", label: "Autoplay", initial: false },
+    status: { kind: "boolean", label: "Status", initial: true },
+    pagination: { kind: "boolean", label: "Pagination", initial: false },
+  },
+  code: (v) => {
+    const vertical = v.orientation === "vertical"
+    const slide = vertical ? "flex h-full" : "flex aspect-video"
+    return moduleCode({
+      imports: [
+        [
+          `${UI}/carousel`,
+          [
+            "Carousel",
+            "CarouselContent",
+            "CarouselItem",
+            "CarouselNext",
+            "CarouselPrevious",
+            ...(v.status ? ["CarouselStatus"] : []),
+            ...(v.pagination ? ["CarouselPagination"] : []),
+            ...(v.autoplay ? ["CarouselProgress", "CarouselPlayToggle"] : []),
+          ],
+        ],
+      ],
+      name: "CarouselDemo",
+      setup: [`const slides = ${JSON.stringify(CAROUSEL_SLIDES).replaceAll(",", ", ")}`],
+      jsx: element(
+        "Carousel",
+        [
+          attr("label", "Presets"),
+          attr("orientation", unless(v.orientation, "horizontal")),
+          attr("align", unless(v.align, "start")),
+          attr("slidesPerView", unless(v.slidesPerView, 1)),
+          attr("effect", unless(v.effect, "none")),
+          attr("loop", v.loop),
+          v.autoplay ? expr("autoplay", "3000") : "",
+          attr("className", "w-full max-w-md"),
+        ],
+        [
+          element(
+            "CarouselContent",
+            [vertical ? attr("className", "h-64") : ""],
+            [
+              [
+                "{slides.map((name) => (",
+                indent(
+                  element(
+                    "CarouselItem",
+                    [expr("key", "name")],
+                    [
+                      element(
+                        "div",
+                        [
+                          attr(
+                            "className",
+                            `${slide} items-center justify-center rounded-md border border-line bg-surface bg-dots font-mono text-sm`,
+                          ),
+                        ],
+                        ["{name}.tsx"],
+                      ),
+                    ],
+                  ),
+                  2,
+                ),
+                "))}",
+              ].join("\n"),
+            ],
+          ),
+          element(
+            "div",
+            [attr("className", "flex items-center justify-between gap-2")],
+            [
+              "<CarouselPrevious />",
+              v.status ? "<CarouselStatus />" : "",
+              v.pagination ? "<CarouselPagination />" : "",
+              v.autoplay ? "<CarouselProgress />" : "",
+              v.autoplay ? "<CarouselPlayToggle />" : "",
+              "<CarouselNext />",
+            ],
+          ),
+        ],
+      ),
+    })
+  },
+  props: [
+    {
+      name: "label",
+      type: "string",
+      description: 'Accessible name of the carousel, e.g. "Presets".',
+    },
+    {
+      name: "orientation",
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+      description: "Drag axis and arrow-key direction. Vertical needs a height on CarouselContent.",
+    },
+    {
+      name: "align",
+      type: '"start" | "center"',
+      default: '"start"',
+      description: "start pins slides to the leading edge; center centers the current slide.",
+    },
+    {
+      name: "slidesPerView",
+      type: "number",
+      default: "1",
+      description: "Slides visible at once. Fractions show a peek of the next one.",
+    },
+    {
+      name: "effect",
+      type: '"none" | "fade" | "scale"',
+      default: '"none"',
+      description: "Fades or shrinks slides by distance from the center, live while dragging.",
+    },
+    {
+      name: "loop",
+      type: "boolean",
+      default: "false",
+      description: "Wrap from the last slide to the first.",
+    },
+    {
+      name: "autoplay",
+      type: "number",
+      default: "0",
+      description:
+        "Milliseconds per slide; 0 is off. Pauses on hover and focus, off with reduced motion. Add CarouselPlayToggle.",
+    },
+    {
+      name: "onIndexChange",
+      type: "(index: number) => void",
+      description: "Called when the current slide changes.",
+    },
+    {
+      name: "CarouselStatus format",
+      type: '"long" | "short"',
+      default: '"long"',
+      description: "long shows slide 03/05; short shows 03 / 05.",
+    },
+    {
+      name: "CarouselThumbs children",
+      type: "(index: number) => ReactNode",
+      description: "Renders the thumbnail for each slide.",
+    },
+  ],
+  examples: [
+    "carousel-default",
+    "carousel-multiple",
+    "carousel-vertical",
+    "carousel-status",
+    "carousel-status-2",
+    "carousel-pagination",
+    "carousel-footer",
+    "carousel-progress",
+    "carousel-thumbs",
+    "carousel-opacity",
+    "carousel-scale",
+  ],
+  a11y: [
+    'The carousel is a labelled region (aria-roledescription="carousel"); each slide is a group labelled "N of M".',
+    "Left and Right arrow keys (Up and Down when vertical), Home and End move between slides while focus is inside.",
+    "Slides outside the viewport are inert, so Tab never lands on hidden content.",
+    "A polite live region announces the current slide; it stays quiet while autoplay is running.",
+    "Autoplay pauses on hover and focus, needs CarouselPlayToggle (WCAG 2.2.2), and is off with reduced motion, where slides also jump instead of sliding.",
+  ],
+})
+
+const bouncingDots = defineComponent({
+  slug: "bouncing-dots",
+  name: "Bouncing Dots",
+  category: "Feedback",
+  description:
+    "A friendly loading indicator: dots bounce in a staggered wave (Motion). The Bouncing Dots preset as a component.",
+  importPath: `${UI}/bouncing-dots`,
+  exports: ["BouncingDots"],
+  controls: {
+    size: { kind: "select", label: "Size", options: ["sm", "md", "lg"], initial: "md" },
+    count: { kind: "number", label: "Dots", initial: 3, min: 3, max: 6, step: 1 },
+    height: { kind: "number", label: "Bounce height", initial: 8, min: 4, max: 24, step: 1 },
+    label: { kind: "text", label: "Accessible name", initial: "Loading", maxLength: 40 },
+  },
+  code: (v) =>
+    moduleCode({
+      imports: [[`${UI}/bouncing-dots`, ["BouncingDots"]]],
+      name: "BouncingDotsDemo",
+      jsx: element("BouncingDots", [
+        attr("size", unless(v.size, "md")),
+        attr("count", unless(v.count, 3)),
+        attr("height", unless(v.height, 8)),
+        attr("label", unless(v.label, "Loading")),
+      ]),
+    }),
+  props: [
+    { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Dot size." },
+    { name: "count", type: "number", default: "3", description: "Number of dots, 3 to 6." },
+    { name: "height", type: "number", default: "8", description: "Bounce height in px." },
+    { name: "duration", type: "number", default: "450", description: "Milliseconds per bounce." },
+    { name: "stagger", type: "number", default: "120", description: "Milliseconds between dots." },
+    {
+      name: "label",
+      type: "string",
+      default: '"Loading"',
+      description: "Announced to screen readers.",
+    },
+  ],
+  examples: ["bouncing-dots"],
+  a11y: [
+    'A role="status" region: its label is announced when it appears. Make it specific, e.g. "Ada is typing".',
+    "With reduced motion the dots stay still.",
+  ],
+})
+
+const orbitSpinner = defineComponent({
+  slug: "orbit-spinner",
+  name: "Orbit Spinner",
+  category: "Feedback",
+  description:
+    "Satellites orbit a core: a calmer alternative to a spinner (Motion). The Orbit Spinner preset as a component.",
+  importPath: `${UI}/orbit-spinner`,
+  exports: ["OrbitSpinner"],
+  controls: {
+    size: { kind: "select", label: "Size", options: ["sm", "md", "lg"], initial: "lg" },
+    direction: {
+      kind: "select",
+      label: "Direction",
+      options: ["clockwise", "counterclockwise"],
+      initial: "clockwise",
+    },
+    duration: {
+      kind: "number",
+      label: "Revolution",
+      initial: 1200,
+      min: 300,
+      max: 5000,
+      step: 100,
+    },
+    label: { kind: "text", label: "Accessible name", initial: "Loading", maxLength: 40 },
+  },
+  code: (v) =>
+    moduleCode({
+      imports: [[`${UI}/orbit-spinner`, ["OrbitSpinner"]]],
+      name: "OrbitSpinnerDemo",
+      jsx: element("OrbitSpinner", [
+        attr("size", unless(v.size, "md")),
+        attr("direction", unless(v.direction, "clockwise")),
+        attr("duration", unless(v.duration, 1200)),
+        attr("label", unless(v.label, "Loading")),
+      ]),
+    }),
+  props: [
+    { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Overall size." },
+    {
+      name: "direction",
+      type: '"clockwise" | "counterclockwise"',
+      default: '"clockwise"',
+      description: "Orbit direction.",
+    },
+    {
+      name: "duration",
+      type: "number",
+      default: "1200",
+      description: "Milliseconds per revolution.",
+    },
+    {
+      name: "label",
+      type: "string",
+      default: '"Loading"',
+      description: "Announced to screen readers.",
+    },
+  ],
+  examples: ["orbit-spinner"],
+  a11y: [
+    'A role="status" region: its label is announced when it appears.',
+    "With reduced motion the satellites stay still.",
+  ],
+})
+
+const lineDraw = defineComponent({
+  slug: "line-draw",
+  name: "Line Draw",
+  category: "Display",
+  description:
+    "An SVG whose strokes draw themselves on, one shape after another (Anime.js). The Line Draw preset as a component.",
+  importPath: `${UI}/line-draw`,
+  exports: ["LineDraw"],
+  controls: {
+    repeat: {
+      kind: "select",
+      label: "Repeat",
+      options: ["none", "loop", "alternate"],
+      initial: "alternate",
+    },
+    duration: { kind: "number", label: "Duration", initial: 1600, min: 300, max: 5000, step: 100 },
+    stagger: { kind: "number", label: "Stagger", initial: 150, min: 0, max: 600, step: 10 },
+  },
+  code: (v) =>
+    moduleCode({
+      imports: [[`${UI}/line-draw`, ["LineDraw"]]],
+      name: "LineDrawDemo",
+      jsx: element(
+        "LineDraw",
+        [
+          attr("label", "Image"),
+          attr("viewBox", "0 0 120 96"),
+          attr("repeat", unless(v.repeat, "none")),
+          attr("duration", unless(v.duration, 1600)),
+          attr("stagger", unless(v.stagger, 150)),
+          expr("strokeWidth", "3"),
+          attr("className", "h-28 w-36"),
+        ],
+        [
+          '<rect x="6" y="6" width="108" height="84" rx="14" />',
+          '<path d="M22 66 L44 40 L62 56 L76 44 L98 66" />',
+          '<circle cx="86" cy="26" r="8" />',
+        ],
+      ),
+    }),
+  props: [
+    {
+      name: "children",
+      type: "SVG shapes",
+      description: "path, line, polyline, polygon, circle, ellipse or rect. Each draws in turn.",
+    },
+    {
+      name: "label",
+      type: "string",
+      description: 'Accessible name (role="img"). Leave it out for decorative drawings.',
+    },
+    { name: "duration", type: "number", default: "1600", description: "Milliseconds per shape." },
+    {
+      name: "stagger",
+      type: "number",
+      default: "150",
+      description: "Milliseconds between shapes.",
+    },
+    {
+      name: "delay",
+      type: "number",
+      default: "0",
+      description: "Milliseconds before the first shape.",
+    },
+    {
+      name: "repeat",
+      type: '"none" | "loop" | "alternate"',
+      default: '"none"',
+      description: "alternate draws on and retracts forever; loop redraws forever.",
+    },
+    ...TRIGGER_PROPS,
+    {
+      name: "...props",
+      type: 'ComponentProps<"svg">',
+      description: "Any SVG attribute, e.g. viewBox, strokeWidth or className.",
+    },
+  ],
+  examples: ["line-draw"],
+  a11y: [
+    'With a label it is an image (role="img"); without one it is hidden from screen readers.',
+    "Avoid repeat for drawings next to text people are reading: endless motion is distracting.",
+    REDUCED_MOTION_NOTE,
+  ],
+})
+
 /** All documented components, keyed by slug (the URL: /components/<slug>). */
 export const COMPONENT_DOCS = {
   button,
@@ -888,6 +1573,8 @@ export const COMPONENT_DOCS = {
   alert,
   progress,
   spinner,
+  "bouncing-dots": bouncingDots,
+  "orbit-spinner": orbitSpinner,
   skeleton,
   badge,
   card,
@@ -895,6 +1582,12 @@ export const COMPONENT_DOCS = {
   separator,
   tabs,
   dialog,
+  carousel,
+  "line-draw": lineDraw,
+  "text-reveal": textReveal,
+  "number-ticker": numberTicker,
+  "text-scramble": textScramble,
+  "text-highlight": textHighlight,
 } as const
 
 export type ComponentSlug = keyof typeof COMPONENT_DOCS

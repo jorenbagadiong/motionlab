@@ -1,27 +1,25 @@
 import { expect, test } from "@playwright/test"
 import { gotoHydrated } from "./helpers"
 
-test("landing page links to the gallery and playground", async ({ page }) => {
+test("landing page links to the component library", async ({ page }) => {
   await page.goto("/")
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Design motion")
-  await page.getByRole("link", { name: "Explore animations" }).click()
-  await expect(page).toHaveURL(/\/explore$/)
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Animated components")
+  await page.getByRole("link", { name: "Browse components" }).click()
+  await expect(page).toHaveURL(/\/components$/)
 
   await page.goto("/")
-  await page.getByRole("link", { name: "Open the playground" }).click()
-  await expect(page).toHaveURL(/\/playground\/fade-up$/)
+  await page.getByRole("link", { name: "See the carousel" }).click()
+  await expect(page).toHaveURL(/\/components\/carousel$/)
 })
 
-test("landing demo switches presets", async ({ page }) => {
+test("landing showcase moves between components", async ({ page }) => {
   await gotoHydrated(page, "/")
-  const panel = page.getByRole("region", { name: "Live demo" })
-  const demo = panel.getByRole("group", { name: "Demo preset" })
-  await demo.getByRole("button", { name: "Spring Pop" }).click()
-  await expect(demo.getByRole("button", { name: "Spring Pop" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  )
-  await expect(panel.getByRole("link", { name: "Customize Spring Pop" })).toBeVisible()
+  const showcase = page.getByRole("region", { name: "Component showcase" })
+  // No autoplay: the first slide stays put until the visitor moves it.
+  await expect(showcase.getByRole("button", { name: /autoplay/ })).toHaveCount(0)
+  await showcase.getByRole("button", { name: "Next slide" }).click()
+  await expect(showcase.getByRole("group", { name: "2 of 4" })).not.toHaveAttribute("inert")
+  await expect(showcase.getByRole("link", { name: "> Text Reveal" })).toBeVisible()
 })
 
 test("playground switches presets and marks the active one", async ({ page }) => {

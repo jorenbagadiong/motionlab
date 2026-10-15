@@ -1,8 +1,8 @@
 # MotionLab
 
-An interactive motion design studio: explore animation presets, tune them in real time, inspect
-the implementation and save them for future projects. Built with Next.js, Motion for React,
-Anime.js and Supabase.
+An animated component library: accessible React components built with Tailwind CSS, Motion for
+React and Anime.js, each with a live playground and copy-ready code. Built with Next.js; no
+accounts and no backend.
 
 ## Status
 
@@ -11,15 +11,16 @@ Anime.js and Supabase.
 | 1     | Foundation: tooling, design system, shell, landing, gallery, working presets | ✅ Done |
 | 2     | Animation editor: live controls, reset, config-driven replay                 | ✅ Done |
 | 3     | Code generation: Motion / Anime.js snippets, copy to clipboard               | ✅ Done |
-| 4     | Supabase: Google OAuth, migrations, RLS, personal library CRUD               | ⏳ Next |
-| 5     | Favorites, collections, polish, deployment                                   | Planned |
+| 4     | Component library: animated components (carousel, text), live playgrounds    | ✅ Done |
+| 5     | Polish and deployment                                                        | Planned |
 
 What works today: 13 built-in presets across 10 animation families (both engines), a searchable
 and filterable gallery, preset detail pages, a playground where every supported property can be
 edited live, and a "How to use" panel with copy-ready code (install command, component or
 function, usage example) that matches the preview, light/dark mode with five color themes, and a
-component library at `/components`: 16 components (buttons, form controls, alerts, dialog, tabs and
-more), each with its own page and a live playground where you change props and copy the matching
+component library at `/components`: 24 components (buttons, form controls, alerts, dialog, tabs,
+a draggable carousel, four animated text components and the Line Draw, Bouncing Dots and Orbit
+Spinner presets as components), each with its own page and a live playground where you change props and copy the matching
 code. Reduced motion and responsive layouts are supported
 throughout.
 
@@ -31,8 +32,7 @@ animation families.
 
 Next.js 16.3 (App Router, Cache Components, Turbopack) · React 19 · TypeScript 5 (strict) ·
 Tailwind CSS 4 · Motion for React 13 (`motion/react`) · Anime.js 4 · Zod 4 · Lucide ·
-Vitest 5 + React Testing Library · Playwright 1.63. Supabase and React Hook Form are added in
-later phases, when they are first needed.
+Vitest 5 + React Testing Library · Playwright 1.63.
 
 ### Dependency policy
 
@@ -91,6 +91,13 @@ tests/
   (unknown keys rejected), bounded numbers and enumerated easings, and fills missing values
   from defaults. Easings are engine-specific so generated code can match the preview exactly.
 - **Durations are milliseconds everywhere.** The Motion adapter converts to seconds.
+
+### Which engine animates what
+
+**Anime.js animates SVG and text effects** (text reveal, scramble, number ticker, highlights, line
+drawing, the carousel's arrows and counter). **Motion animates everything else**: component
+blocks, layout, gestures, drag, springs and loaders. Presets and library components follow the
+same rule, so each family's `engine` in `model/families.ts` reflects it.
 
 ### Engine adapters and lifecycle
 
@@ -198,8 +205,7 @@ configuration.
 
 ### Environment variables
 
-See [`.env.example`](.env.example). Nothing is required for Phase 1. Supabase variables are
-documented there and become required in Phase 4.
+See [`.env.example`](.env.example). Nothing is required.
 
 ## Scripts
 
@@ -240,9 +246,8 @@ E2E_BROWSER_CHANNEL=chrome npm run test:e2e
 
 ## Deployment
 
-Vercel deployment and Supabase setup (OAuth redirect URLs, migrations, RLS verification) are
-documented as part of Phases 4–5. Phase 1 builds as a fully static and partially prerendered app
-with no required environment variables.
+The app builds as a fully static and partially prerendered site with no required environment
+variables, so it deploys to Vercel (or any Next.js host) as is.
 
 ## Known issues
 

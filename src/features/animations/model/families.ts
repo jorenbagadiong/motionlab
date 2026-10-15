@@ -139,8 +139,70 @@ export const pageTransition = defineFamily({
   },
 })
 
+// Loaders are block elements, so they use Motion; Anime.js is kept for SVG and text.
+
+export const bouncingDots = defineFamily({
+  id: "bouncing-dots",
+  engine: "motion",
+  label: "Bouncing dots",
+  playback: "infinite",
+  fields: {
+    duration: f.duration(450, 1500),
+    stagger: f.stagger(120, 300),
+    height: numberField({
+      label: "Bounce height",
+      min: 4,
+      max: 40,
+      step: 1,
+      default: 14,
+      unit: "px",
+    }),
+    ease: f.motionEase("easeInOut"),
+    count: f.count("Dots", 3, 3, 6),
+  },
+})
+
+export const progressBar = defineFamily({
+  id: "progress-bar",
+  engine: "motion",
+  label: "Progress bar",
+  playback: "timeline",
+  fields: {
+    duration: f.duration(1800, 5000),
+    delay: f.delay(),
+    ease: f.motionEase("easeInOut"),
+    repeat: f.repeat("loop"),
+  },
+})
+
+export const orbitSpinner = defineFamily({
+  id: "orbit-spinner",
+  engine: "motion",
+  label: "Orbit spinner",
+  playback: "infinite",
+  fields: {
+    duration: numberField({
+      label: "Revolution time",
+      min: 300,
+      max: 5000,
+      step: 50,
+      default: 1200,
+      unit: "ms",
+    }),
+    ease: f.motionEase("linear"),
+    spin: selectField({
+      label: "Spin direction",
+      options: [
+        { value: "clockwise", label: "Clockwise" },
+        { value: "counterclockwise", label: "Counter-clockwise" },
+      ],
+      default: "clockwise",
+    }),
+  },
+})
+
 // ---------------------------------------------------------------------------
-// Anime.js families
+// Anime.js families (SVG and text effects)
 // ---------------------------------------------------------------------------
 
 export const textReveal = defineFamily({
@@ -177,66 +239,6 @@ export const svgDraw = defineFamily({
     stagger: f.stagger(150, 600),
     ease: f.animeEase("inOutSine"),
     repeat: f.repeat("alternate"),
-  },
-})
-
-export const bouncingDots = defineFamily({
-  id: "bouncing-dots",
-  engine: "anime",
-  label: "Bouncing dots",
-  playback: "infinite",
-  fields: {
-    duration: f.duration(450, 1500),
-    stagger: f.stagger(120, 300),
-    height: numberField({
-      label: "Bounce height",
-      min: 4,
-      max: 40,
-      step: 1,
-      default: 14,
-      unit: "px",
-    }),
-    ease: f.animeEase("inOutSine"),
-    count: f.count("Dots", 3, 3, 6),
-  },
-})
-
-export const progressBar = defineFamily({
-  id: "progress-bar",
-  engine: "anime",
-  label: "Progress bar",
-  playback: "timeline",
-  fields: {
-    duration: f.duration(1800, 5000),
-    delay: f.delay(),
-    ease: f.animeEase("inOutQuad"),
-    repeat: f.repeat("loop"),
-  },
-})
-
-export const orbitSpinner = defineFamily({
-  id: "orbit-spinner",
-  engine: "anime",
-  label: "Orbit spinner",
-  playback: "infinite",
-  fields: {
-    duration: numberField({
-      label: "Revolution time",
-      min: 300,
-      max: 5000,
-      step: 50,
-      default: 1200,
-      unit: "ms",
-    }),
-    ease: f.animeEase("linear"),
-    spin: selectField({
-      label: "Spin direction",
-      options: [
-        { value: "clockwise", label: "Clockwise" },
-        { value: "counterclockwise", label: "Counter-clockwise" },
-      ],
-      default: "clockwise",
-    }),
   },
 })
 

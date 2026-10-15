@@ -152,3 +152,68 @@ export function hoverLiftProps(c: ConfigFor<"hover-lift">) {
     transition: { type: "spring" as const, stiffness: c.stiffness, damping: c.damping },
   }
 }
+
+// --- bouncing-dots ----------------------------------------------------------
+
+export function bouncingDotsKeyframes(c: ConfigFor<"bouncing-dots">) {
+  return { y: [0, -c.height] }
+}
+
+export function bouncingDotsTransition(c: ConfigFor<"bouncing-dots">) {
+  return {
+    duration: seconds(c.duration),
+    ease: c.ease,
+    repeat: Infinity,
+    repeatType: "reverse" as const,
+  }
+}
+
+export function startBouncingDots(root: Element, c: ConfigFor<"bouncing-dots">): PlaybackControls {
+  const dots = queryTargets(root, "[data-anim-item]")
+  return wrap(
+    animate(dots, bouncingDotsKeyframes(c), {
+      ...bouncingDotsTransition(c),
+      delay: stagger(seconds(c.stagger)),
+    }),
+  )
+}
+
+// --- progress-bar -----------------------------------------------------------
+
+export function progressBarKeyframes() {
+  return { scaleX: [0, 1] }
+}
+
+export function progressBarTransition(c: ConfigFor<"progress-bar">) {
+  return {
+    duration: seconds(c.duration),
+    delay: seconds(c.delay),
+    ease: c.ease,
+    ...motionRepeat(c.repeat),
+  }
+}
+
+export function startProgressBar(root: Element, c: ConfigFor<"progress-bar">): PlaybackControls {
+  const bar = queryTarget(root, "[data-anim-target]")
+  return wrap(animate(bar, progressBarKeyframes(), progressBarTransition(c)))
+}
+
+// --- orbit-spinner ----------------------------------------------------------
+
+export function orbitSpinnerKeyframes(c: ConfigFor<"orbit-spinner">) {
+  return { rotate: c.spin === "clockwise" ? [0, 360] : [0, -360] }
+}
+
+export function orbitSpinnerTransition(c: ConfigFor<"orbit-spinner">) {
+  return {
+    duration: seconds(c.duration),
+    ease: c.ease,
+    repeat: Infinity,
+    repeatType: "loop" as const,
+  }
+}
+
+export function startOrbitSpinner(root: Element, c: ConfigFor<"orbit-spinner">): PlaybackControls {
+  const orbit = queryTarget(root, "[data-anim-target]")
+  return wrap(animate(orbit, orbitSpinnerKeyframes(c), orbitSpinnerTransition(c)))
+}

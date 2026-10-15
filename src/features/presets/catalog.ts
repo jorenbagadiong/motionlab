@@ -13,6 +13,8 @@ export interface BuiltInPreset {
   category: CategoryId
   tags: readonly string[]
   featured?: boolean
+  /** Slug of the component-library page (/components/<slug>) that ships this animation. */
+  component?: string
   config: AnimationConfig
 }
 
@@ -97,6 +99,7 @@ export const BUILT_IN_PRESETS: readonly BuiltInPreset[] = [
     category: "text",
     tags: ["headline", "split text", "stagger"],
     featured: true,
+    component: "text-reveal",
   }),
   preset(
     "text-reveal",
@@ -106,6 +109,7 @@ export const BUILT_IN_PRESETS: readonly BuiltInPreset[] = [
       description: "Letters drop in from a tilt with an elastic settle.",
       category: "text",
       tags: ["headline", "rotation", "elastic"],
+      component: "text-reveal",
     },
     { distance: 24, fromRotation: 45, stagger: 60, duration: 1200, ease: "outElastic" },
   ),
@@ -116,6 +120,7 @@ export const BUILT_IN_PRESETS: readonly BuiltInPreset[] = [
     category: "svg",
     tags: ["stroke", "icon", "illustration"],
     featured: true,
+    component: "line-draw",
   }),
   preset("bouncing-dots", {
     slug: "bouncing-dots",
@@ -124,6 +129,7 @@ export const BUILT_IN_PRESETS: readonly BuiltInPreset[] = [
     category: "loader",
     tags: ["loading", "indicator", "loop"],
     featured: true,
+    component: "bouncing-dots",
   }),
   preset("progress-bar", {
     slug: "progress-fill",
@@ -131,6 +137,7 @@ export const BUILT_IN_PRESETS: readonly BuiltInPreset[] = [
     description: "A smooth, transform-based progress bar that avoids layout work.",
     category: "loader",
     tags: ["progress", "bar", "loop"],
+    component: "progress",
   }),
   preset("orbit-spinner", {
     slug: "orbit-spinner",
@@ -138,6 +145,7 @@ export const BUILT_IN_PRESETS: readonly BuiltInPreset[] = [
     description: "Satellites orbit a center point. A calm alternative to the classic spinner.",
     category: "loader",
     tags: ["loading", "rotation", "loop"],
+    component: "orbit-spinner",
   }),
 ]
 

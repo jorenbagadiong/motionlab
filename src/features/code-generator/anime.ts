@@ -1,10 +1,4 @@
-import {
-  bouncingDotsParams,
-  orbitSpinnerParams,
-  progressBarParams,
-  svgDrawParams,
-  textRevealParams,
-} from "@/features/animations/adapters/anime"
+import { svgDrawParams, textRevealParams } from "@/features/animations/adapters/anime"
 import type { ConfigFor } from "@/features/animations/model"
 import { type CodeValue, raw, toCode } from "./serialize"
 import type { Snippet } from "./types"
@@ -94,57 +88,5 @@ export function animeSvgDraw(c: ConfigFor<"svg-draw">, fn: string): Snippet {
     <path d="M22 66 L44 40 L62 56 L76 44 L98 66" />`,
     ),
     notes: ["Shapes need a stroke and no fill for the drawing to be visible.", CLEANUP_NOTE],
-  }
-}
-
-export function animeBouncingDots(c: ConfigFor<"bouncing-dots">, fn: string): Snippet {
-  const dots = Array.from({ length: c.count }, () => `    <span className="dot" />`).join("\n")
-  return {
-    code: animeModule(
-      ["animate", "stagger"],
-      fn,
-      "A looping, staggered bounce for loading indicators.",
-      `root.querySelectorAll(".dot")`,
-      { ...bouncingDotsParams(c), delay: raw(`stagger(${c.stagger})`) },
-    ),
-    usage: reactUsage(fn, "div", dots),
-    notes: [
-      'Give the container role="status" and a text label so the loading state is announced.',
-      CLEANUP_NOTE,
-    ],
-  }
-}
-
-export function animeProgressBar(c: ConfigFor<"progress-bar">, fn: string): Snippet {
-  return {
-    code: animeModule(
-      ["animate"],
-      fn,
-      "Fills a progress bar using a transform, avoiding layout work.",
-      `root.querySelectorAll(".bar")`,
-      progressBarParams(c),
-    ),
-    usage: reactUsage(fn, "div", `    <div className="bar" style={{ transformOrigin: "left" }} />`),
-    notes: ["The bar must use transform-origin: left so it grows from the start.", CLEANUP_NOTE],
-  }
-}
-
-export function animeOrbitSpinner(c: ConfigFor<"orbit-spinner">, fn: string): Snippet {
-  return {
-    code: animeModule(
-      ["animate"],
-      fn,
-      "Rotates satellites around a center point.",
-      `root.querySelectorAll(".orbit")`,
-      orbitSpinnerParams(c),
-    ),
-    usage: reactUsage(
-      fn,
-      "div",
-      `    <div className="orbit">
-      <span className="satellite" />
-    </div>`,
-    ),
-    notes: ["Position the satellites inside .orbit; the whole group rotates.", CLEANUP_NOTE],
   }
 }

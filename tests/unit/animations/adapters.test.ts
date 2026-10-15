@@ -1,15 +1,12 @@
 import { describe, expect, it } from "vitest"
-import {
-  animeRepeat,
-  orbitSpinnerParams,
-  textRevealParams,
-} from "@/features/animations/adapters/anime"
+import { animeRepeat, textRevealParams } from "@/features/animations/adapters/anime"
 import {
   fadeSlideKeyframes,
   fadeSlideTransition,
   hoverLiftProps,
   motionRepeat,
   offsetFor,
+  orbitSpinnerKeyframes,
   pageTransitionKeyframes,
   springPopTransition,
 } from "@/features/animations/adapters/motion"
@@ -78,6 +75,6 @@ describe("anime adapter", () => {
 
   it("reverses rotation for counter-clockwise spinners", () => {
     const config = { ...defaultConfig("orbit-spinner"), spin: "counterclockwise" as const }
-    expect(orbitSpinnerParams(config).rotate).toEqual([0, -360])
+    expect(orbitSpinnerKeyframes(config).rotate).toEqual([0, -360])
   })
 })

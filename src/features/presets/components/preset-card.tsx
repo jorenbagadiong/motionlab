@@ -1,4 +1,4 @@
-import { SlidersHorizontal } from "lucide-react"
+import { Blocks, SlidersHorizontal } from "lucide-react"
 import Link from "next/link"
 import { ButtonLink } from "@/components/ui/button"
 import { PreviewStage } from "@/features/animations/preview/preview-stage"
@@ -42,6 +42,12 @@ export function PresetCard({ preset, headingLevel: Heading = "h3" }: PresetCardP
           <ButtonLink href={`/presets/${preset.slug}`} size="sm" variant="ghost">
             Details <span className="sr-only">for {preset.name}</span>
           </ButtonLink>
+          {preset.component && (
+            <ButtonLink href={`/components/${preset.component}`} size="sm" variant="ghost">
+              <Blocks aria-hidden />
+              Component <span className="sr-only">for {preset.name}</span>
+            </ButtonLink>
+          )}
         </div>
       </div>
     </article>

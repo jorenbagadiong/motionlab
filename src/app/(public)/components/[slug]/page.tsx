@@ -2,7 +2,9 @@ import { ArrowLeft, ArrowRight, Check } from "lucide-react"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import { PageHeader } from "@/components/layout/page-header"
+import { Skeleton } from "@/components/ui/skeleton"
 import { CodeBlock } from "@/features/code-generator/components/code-block"
 import { ComponentPlayground } from "@/features/component-library/components/component-playground"
 import { ExampleSection } from "@/features/component-library/components/example-section"
@@ -25,7 +27,33 @@ export async function generateMetadata({
   return doc ? { title: `${doc.name} · Components`, description: doc.description } : {}
 }
 
-export default async function ComponentPage({ params }: PageProps<"/components/[slug]">) {
+/**
+ * The App Shell is shared by every component link, so it can't depend on the slug.
+ * Reading params happens inside the Suspense boundary; the shell is the skeleton.
+ */
+export default function ComponentPage({ params }: PageProps<"/components/[slug]">) {
+  return (
+    <Suspense fallback={<ComponentPageSkeleton />}>
+      <ComponentDetails params={params} />
+    </Suspense>
+  )
+}
+
+function ComponentPageSkeleton() {
+  return (
+    <div className="flex flex-col gap-10" role="status" aria-label="Loading component">
+      <div className="flex flex-col gap-3">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-9 w-56" />
+        <Skeleton className="h-5 w-full max-w-xl" />
+      </div>
+      <Skeleton className="h-12 w-full" />
+      <Skeleton className="h-96 w-full rounded-2xl" />
+    </div>
+  )
+}
+
+async function ComponentDetails({ params }: Pick<PageProps<"/components/[slug]">, "params">) {
   const doc = getComponentDoc((await params).slug)
   if (!doc) notFound()
 
