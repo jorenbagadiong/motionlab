@@ -2,6 +2,7 @@ import type { NextConfig } from "next"
 import { DEFAULT_PRESET_SLUG } from "./src/features/presets/constants"
 
 const nextConfig: NextConfig = {
+  basePath: "/motionlab",
   cacheComponents: true,
   // Dev only: let other devices on the local network (e.g. http://192.168.x.x:3000)
   // load the dev server's scripts. Without this the page renders but never becomes
