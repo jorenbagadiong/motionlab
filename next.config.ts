@@ -1,6 +1,8 @@
 import type { NextConfig } from "next"
 import { DEFAULT_PRESET_SLUG } from "./src/features/presets/constants"
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? ""
+
 const nextConfig: NextConfig = {
   basePath: "/motionlab",
   cacheComponents: true,
@@ -21,6 +23,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // When a base path is set, send the bare root (e.g. motionlab-six.vercel.app/)
+      // to /motionlab instead of showing a 404.
+      ...(basePath
+        ? [{ source: "/", destination: basePath, basePath: false as const, permanent: false }]
+        : []),
       {
         source: "/playground",
         destination: `/playground/${DEFAULT_PRESET_SLUG}`,
